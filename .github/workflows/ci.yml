@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  lint-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Lint (eslint)
+        working-directory: app
+        run: npm run lint
+
+      - name: Format check (prettier)
+        working-directory: app
+        run: npx --no-install prettier --check .
+
+      - name: Build (next build)
+        working-directory: app
+        run: npm run build
+
+      - name: Tests
+        working-directory: app
+        run: npm test --if-present
+
+      - name: C-02 — no large binaries in repo
+        run: |
+          large=$(find . -path ./.git -prune -o -type f -size +5M -print | grep -v -E 'node_modules|\.next/' || true)
+          if [ -n "$large" ]; then
+            echo "C-02 violated: files >5MB in repo:"; echo "$large"; exit 1
+          fi
+          echo "C-02 OK: no files >5MB"

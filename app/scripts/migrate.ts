@@ -24,15 +24,31 @@ const PG_DB = process.env.POSTGRES_DB ?? "scorm_inspector";
 function runInContainer(args: string[], opts: { input?: string } = {}): string {
   return execFileSync(
     "docker",
-    ["compose", "-f", COMPOSE_FILE, "exec", "-T", "-e", `PGUSER=${PG_USER}`, "-e", `PGDATABASE=${PG_DB}`, SERVICE, ...args],
+    [
+      "compose",
+      "-f",
+      COMPOSE_FILE,
+      "exec",
+      "-T",
+      "-e",
+      `PGUSER=${PG_USER}`,
+      "-e",
+      `PGDATABASE=${PG_DB}`,
+      SERVICE,
+      ...args,
+    ],
     { input: opts.input, encoding: "utf8" },
   );
 }
 
 function ensureMigrationsTable(): void {
   runInContainer([
-    "psql", "-v", "ON_ERROR_STOP=1", "-q",
-    "-c", `CREATE TABLE IF NOT EXISTS schema_migrations (
+    "psql",
+    "-v",
+    "ON_ERROR_STOP=1",
+    "-q",
+    "-c",
+    `CREATE TABLE IF NOT EXISTS schema_migrations (
       name TEXT PRIMARY KEY,
       applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )`,
@@ -41,7 +57,11 @@ function ensureMigrationsTable(): void {
 
 function appliedMigrations(): Set<string> {
   const out = runInContainer([
-    "psql", "-t", "-A", "-c", "SELECT name FROM schema_migrations ORDER BY name",
+    "psql",
+    "-t",
+    "-A",
+    "-c",
+    "SELECT name FROM schema_migrations ORDER BY name",
   ]);
   return new Set(out.split("\n").filter(Boolean));
 }
@@ -49,7 +69,9 @@ function appliedMigrations(): Set<string> {
 function applyMigration(name: string, sql: string): void {
   const wrapped = `BEGIN;\n${sql}\nINSERT INTO schema_migrations(name) VALUES ('${name}');\nCOMMIT;`;
   try {
-    runInContainer(["psql", "-v", "ON_ERROR_STOP=1", "-q", "-f", "-"], { input: wrapped });
+    runInContainer(["psql", "-v", "ON_ERROR_STOP=1", "-q", "-f", "-"], {
+      input: wrapped,
+    });
   } catch (err) {
     throw new Error(
       `Миграция ${name} не применилась (транзакция откатена):\n${err instanceof Error ? err.message : err}`,
@@ -81,7 +103,9 @@ function main(): void {
     applyMigration(name, sql);
     console.log(`применено: ${name}`);
   }
-  console.log(`Готово: применено ${pending.length}, всего файлов миграций: ${files.length}.`);
+  console.log(
+    `Готово: применено ${pending.length}, всего файлов миграций: ${files.length}.`,
+  );
 }
 
 main();
