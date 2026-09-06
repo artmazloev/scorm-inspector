@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: scorm-inspector-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-scorm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-scorm}
+      POSTGRES_DB: ${POSTGRES_DB:-scorm_inspector}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-scorm} -d ${POSTGRES_DB:-scorm_inspector}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  db-data:
