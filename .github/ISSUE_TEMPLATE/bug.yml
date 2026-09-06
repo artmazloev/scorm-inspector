@@ -1,0 +1,23 @@
+name: Баг
+description: Что-то сломалось
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Что произошло
+    validations: {required: true}
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Как воспроизвести (минимальный кейс)
+    validations: {required: true}
+  - type: textarea
+    id: expected
+    attributes:
+      label: Что ожидалось
+    validations: {required: true}
+  - type: input
+    id: incident
+    attributes:
+      label: ID инцидента (INC-xxx), если заведён
