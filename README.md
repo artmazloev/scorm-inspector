@@ -15,9 +15,12 @@
 
 ## Рабочий процесс
 
-- Разработка — через фича-ветки + pull request (main защищён, требуется 1 approve).
-- Требования — стабильные ID `RQ-xxx` с проверяемым критерием приёмки.
+- Разработка — через фича-ветки + pull request (main защищён; администратор может мержить без approve, у остальных запрашивается 1 approve).
+- Каждая таска — GitHub issue (work packet): цель, критерий готовности, allowed/forbidden, привязка к RQ-/C-.
+- **Старт таски в новой сессии Hermes**: см. `docs/runbook-task-session.md` — одна команда, контекст и репо подтягиваются автоматически.
+- Требования — стабильные ID `RQ-xxx` с проверяемым критерием приёмки ([docs/requirements.md](docs/requirements.md)).
 - Решения — ADR в [docs/decisions/](docs/decisions/).
+- Управление: GitHub Project https://github.com/users/artmazloev/projects/1 (Status: Todo/In Progress/Done, поле Phase по фазам).
 
 ## Лицензия
 
