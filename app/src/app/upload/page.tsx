@@ -29,11 +29,9 @@ export default function UploadPage() {
       const body = new FormData();
       body.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body });
-      const data = await res
-        .json()
-        .catch(() => ({
-          error: `Некорректный ответ сервера (HTTP ${res.status})`,
-        }));
+      const data = await res.json().catch(() => ({
+        error: `Некорректный ответ сервера (HTTP ${res.status})`,
+      }));
       if (!res.ok) {
         setError(data.error ?? `Ошибка загрузки (HTTP ${res.status})`);
       } else {
