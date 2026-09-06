@@ -13,8 +13,15 @@ import { NextResponse } from "next/server";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { homedir } from "node:os";
-import { findPackageBySha, getPool, insertPackage, sha256 } from "@/lib/db";
+import {
+  findPackageBySha,
+  getPool,
+  insertPackage,
+  sha256,
+  updatePackageScormVersion,
+} from "@/lib/db";
 import { InvalidZipError, unzipToDir } from "@/lib/unzip";
+import { readAndParseManifest } from "@/lib/manifest";
 
 export const runtime = "nodejs";
 
@@ -98,8 +105,18 @@ export async function POST(req: Request) {
   try {
     await mkdir(destDir, { recursive: true });
     const { files } = await unzipToDir(buf, destDir);
+    // T-011: парсим imsmanifest.xml и сохраняем версию SCORM.
+    // Ошибка парсинга — не падение: находки будут в отчёте (движок проверок T-012),
+    // здесь только фиксируем версию, если она определилась.
+    const manifest = await readAndParseManifest(destDir);
+    await updatePackageScormVersion(pkg.id, manifest.scormVersion);
     return NextResponse.json(
-      { package: pkg, deduplicated: false, files: files.length },
+      {
+        package: { ...pkg, scorm_version: manifest.scormVersion },
+        deduplicated: false,
+        files: files.length,
+        manifestFindings: manifest.findings,
+      },
       { status: 201 },
     );
   } catch (e) {

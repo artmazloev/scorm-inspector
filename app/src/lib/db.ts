@@ -54,6 +54,17 @@ export async function insertPackage(rec: {
   return res.rows[0];
 }
 
+/** Сохранить определённую парсером версию SCORM (T-011). Версия null сбрасывает поле. */
+export async function updatePackageScormVersion(
+  packageId: string,
+  version: string | null,
+): Promise<void> {
+  await getPool().query(
+    "UPDATE packages SET scorm_version = $2 WHERE id = $1",
+    [packageId, version],
+  );
+}
+
 /** Дубликат по sha256 — не ошибка, возвращаем существующую запись. */
 export async function findPackageBySha(
   sha: string,
