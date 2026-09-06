@@ -1,0 +1,9 @@
+{
+  "name": "scorm-inspector",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "migrate": "node --experimental-strip-types app/scripts/migrate.ts",
+    "migrate:app": "npm run migrate --prefix app"
+  }
+}
