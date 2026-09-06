@@ -1,0 +1,17 @@
+# Binaries / build
+/bin/
+/dist/
+*.exe
+
+# Go
+*.test
+*.out
+
+# IDE
+.idea/
+.vscode/
+.DS_Store
+
+# Test fixtures (unpacked)
+/tmp/
+*.unpacked/
