@@ -1,0 +1,38 @@
+name: Таска (work packet)
+description: Делегированная работа по таске из плана
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Фаза
+      options: ["0 — каркас", "1 — приёмка (MVP)", "2 — плеер", "3 — рецензирование", "4 — аккаунты и публикация"]
+    validations: {required: true}
+  - type: textarea
+    id: goal
+    attributes:
+      label: Цель
+    validations: {required: true}
+  - type: textarea
+    id: allowed
+    attributes:
+      label: Allowed changes (что можно менять)
+    validations: {required: true}
+  - type: textarea
+    id: forbidden
+    attributes:
+      label: Forbidden changes (что нельзя трогать)
+  - type: textarea
+    id: outputs
+    attributes:
+      label: Expected outputs
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification (как проверяем, E2E)
+    validations: {required: true}
+  - type: input
+    id: requirements
+    attributes:
+      label: Требования (RQ-/C-)
+      placeholder: RQ-010, C-02
